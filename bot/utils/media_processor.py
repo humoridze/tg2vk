@@ -1,6 +1,6 @@
 from aiogram import Bot
 from aiogram.types import Message, PhotoSize, Video
-from typing import List, Optional, Tuple
+from typing import List, Optional
 from dataclasses import dataclass, field
 import io
 
@@ -45,6 +45,21 @@ class MediaProcessor:
         
         if message.video:
             await self._process_video(message.video, media_group)
+        
+        return media_group
+    
+    async def process_media_group(self, messages: List[Message]) -> MediaGroup:
+        media_group = MediaGroup()
+        
+        for message in messages:
+            if message.caption and not media_group.caption:
+                media_group.caption = message.caption
+            
+            if message.photo:
+                await self._process_photos(message.photo, media_group)
+            
+            if message.video:
+                await self._process_video(message.video, media_group)
         
         return media_group
     
